@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Ajax Posts</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            .wrapper {
+                width: 70%;
+                margin: 0 auto;
+            }
+
+            .posts {
+                display: flex;
+                flex-wrap: wrap;
+                align-content: flex-start;
+                height: 500px;
+                overflow-y: scroll;
+            }
+
+            .post {
+                padding: 20px;
+                border: 1px solid black;
+                width: 27%;
+                height: 100px;
+                margin: 0 20px 20px 0; 
+            }
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <div class="wrapper">
+            <h1>My Posts</h1>
+            <div class="posts">
+                {% for post in posts %}
+                <div class="post">
+                    <p>{{post.post}}</p>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="add_note">
+                <h3>Add a note:</h3>
+                <form action={% url 'posts:add' %} method="POST" id="post_form">
+                    {% csrf_token %}
+                    <textarea name="post" rows="5" cols="50" id="textarea"></textarea>
+                    <br><br>
+                    <input type="submit" value="Post It!">
+                </form>
+            </div>
+        </div>
+
+        <script>
+            $('#post_form').submit(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "/add",
+                    method: "POST",
+                    data: $(this).serialize(),
+                    success: function(res) {
+                        $('.posts').html(res);
+                    }
+                });
+                $('#textarea').val('');
+            });
+        </script>
+    </body>
+</html>
